@@ -148,13 +148,6 @@ if (!module.parent) {
     } else { console.error("Could not determine last BG time"); }
     var minAgo = (systemTime - bgTime) / 60 / 1000;
 
-    if (minAgo > 10 || minAgo < -5) { // Dexcom data is too old, or way in the future
-        var reason = "BG data is too old, or clock set incorrectly.  Your CGM time is "+bgTime+" but your system time is "+systemTime;
-        console.error(reason);
-        var msg = {msg: reason }
-        errors.push(msg);
-        /// return 1;
-    }
     if (warnings.length) {
       console.error(JSON.stringify(warnings));
     }
@@ -164,6 +157,16 @@ if (!module.parent) {
       process.exit(1);
     }
 
+    if (minAgo > 10 || minAgo < -5) { // Dexcom data is too old, or way in the future
+        var reason = "BG data is too old, or clock set incorrectly.  Your CGM time is "+bgTime+" but your system time is "+systemTime;
+        console.error(reason);
+        var msg = {reason: reason }
+	console.log(JSON.stringify(msg));
+//        errors.push(msg);
+        process.exit(1);
+    }
+
+
     if (typeof(iob_data.length) && iob_data.length > 1) {
         console.error(JSON.stringify(iob_data[0]));
     } else {
@@ -172,7 +175,7 @@ if (!module.parent) {
 
     console.error(JSON.stringify(glucose_status));
     console.error(JSON.stringify(currenttemp));
-    console.error(JSON.stringify(profile));
+    //console.error(JSON.stringify(profile));
 
     var tempBasalFunctions = require('oref0/lib/basal-set-temp');
 
